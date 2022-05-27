@@ -1,0 +1,171 @@
+\documentclass{article}
+\usepackage{style}
+
+
+\begin{document}
+
+\input{title}
+
+\input{contributors}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+We present a \href{https://en.wikipedia.org/wiki/Software_design_description}{software design document} for the \textbf{payload designer} (hereafter referred to as the \texttt{program}): a high-level parametric design tool for the FINCH Eye hyperspectral imaging payload being developed by the University of Toronto Aerospace Team.
+
+The objectives of the document are as follows:
+\begin{itemize}
+    \item Outline all parts of the software and how they will work in a cohesive system architecture.
+    \item Address various design concerns and describe rationales for the adopted solutions.
+    \item Act as a stable reference over the course of development.
+    \item Coordinate the developer team under a single vision.
+\end{itemize}
+
+In other words, formally document all rough work including research, equations, references, and software design decisions. The development of such a tool is motivated by the payload team's need to arrive at refined component-specific requirements. As we have been finding through correspondence with component manufacturers, there are many component parameters that cannot be estimated from reference designs and rule-of-thumb estimates alone. Many are very much instrument-specific, and depend on the scientific objectives as well as many other coupled factors in the system. Attempts at modelling various aspects of the payload have been made (see the \href{http://spacesys.utat.ca/confluence/x/NoFmAQ}{Optics Toolkit}\footnote{Powered by Desmos, mankind's greatest invention. Second only to Python.}). These tools have sufficed for the first few design iterations of the payload (up to FINCH Eye v2) but have largely been disjoint and under-documented. Now that the payload team is entering the final stages of design, however, a more formal approach is warranted: one that enables a unified analysis of the entire payload and all of its components. This is the vision for the payload designer.
+
+Source code for the project can be found on \href{https://github.com/spacesys-finch/payload-designer}{Github}.
+
+\section{Design Values}
+The following design values guide the design of the \texttt{program}.
+
+\subsection{Modularity}
+The adopted software system architecture strives to enable as much modularity and configurability as necessary to enable whatever types of analyses and tradeoff studies are desired. Component models are implemented using \href{https://en.wikipedia.org/wiki/Object-oriented_programming}{object-oriented programming} (OOP) to leverage the modularity of the paradigm. Similar components may inherit properties of a parent component (i.e. a VPH grating class may inherit methods and attributes from the surface-relief grating class). This reduces redundancy and the potential for buildup of technical debt.
+
+\subsection{Usability}
+The \texttt{program} strives to let the designer focus on the design as opposed to acting as a hindrance from it.  Configuration of design parameters is simple, allowing for rapid iteration, with little to no need to get into the gritty details of the implementation. The method used to construct new analyses is straightforward and intuitive. Outputs are reported in a user-friendly format, and leverage multi-dimensional visualization tools.
+
+\subsection{Traceability}
+The \texttt{program} and its supporting documentation strive to be traceable. This means all equations and mathematical derivations are traceable back to a \textit{source}, along with proper description of all assumptions associated with a particular model. This level of transparency is part of proper engineering practice as we mature the design of the payload.
+
+\section{Functional Requirements}
+Requirement language is to be interpreted as described in \href{https://microformats.org/wiki/rfc-2119}{RFC 2119}.
+
+The \texttt{program} ...
+\begin{enumerate}
+    \item Must enable calculation of any quantity of interest associated with the payload given the parameters that define the quantity.
+    \item Must allow for visualization of the parameter space for a given quantity to enable trade-off analyses.
+    \item Should allow for automatic optimization of a quantity of interest given a parameter space and constraints.
+    \item May expose controls and display results to a user-interface.
+\end{enumerate}
+
+
+\section{Scope \& Limitations} \label{sec:scope}
+The following defines the scope of what the \texttt{program} intends to be and what it is not. A well-defined scope for the project is necessary to ensure the primary objectives of the project are met within the time constraints, and to avoid the development of functionality that may be redundant in the context of the other pre-existing tools available to the optics team.
+
+\begin{itemize}
+    \item \textbf{Closed-form equations}: All the equations that are used to model the payload system are closed-form. First- and/or second-order approximations are acceptable, such as the paraxial approximation. Consideration of higher-order phenomena such as \href{https://en.wikipedia.org/wiki/Optical_aberration}{optical aberrations} is better left to detailed simulations in CODE V\footnote{CODE V is the optic team's optical simulation tool.}
+    \item \textbf{Ray tracing}: the \texttt{program} will \textbf{not} conduct \href{https://www.synopsys.com/glossary/what-is-ray-tracing.html}{ray tracing}. While a ray tracing engine would allow for the direct coupling of mechanical constraints with the system parameters, this is again better left to CODE V. The \texttt{program} is intended to be a high-level design tool. In effect, this limits the types of physical parameters that can be solved for to angles and relative distances.
+\end{itemize}
+
+\section{Platform}
+The \texttt{program} is to be developed as a Python application. A number of development environments and platforms were considered. The rationale for converging on Python is traced below.
+
+\begin{itemize}
+    \item \textbf{Desmos:} High interactability with built-in sliders and plotting interface. High-fidelity visualization is possible, but requires considerable time investment to do right. Matrix algebra is possible, but requires some hacky solutions to implement. Quickly becomes cluttered and hard to document with more complex programs.
+    
+    \item \textbf{GeoGebra:} Big sister to Desmos. Matrix algebra is built-in, but same arguments of clutter and complexity apply as Desmos.
+    
+    \item \textbf{Google Colab:} Benefits of Python, plus sliders and other interactive UI elements easily creatable via markdown. Linear top-down structure may be limiting with respect to MathCAD.
+
+    \item \textbf{GSOLVER:} Would produce the most accurate representation of our grating characteristics. Is only useful in the context of diffractor design, and may be excessive for our purposes. We should be alright with first- and second-order approximations of our diffractor models.
+    
+    \item \textbf{MathCAD:} Non-linear project structure makes for a more flexible development environment. Free version is very limited, and does not allow access to symbolic manipulation engine. Paid version is paid.
+    
+    \item \textbf{MATLAB:} Supports vectorization out of the box. MATLAB apps with a UI can be made fairly easily with sliders and plots, but the language is terrible. Period. MATLAB apps are nice, but can quickly become limiting compared to Python.
+    
+    \item \textbf{Python:} Greatest flexibility in most respects. \texttt{Numpy} allows for vectorized functions.  Can pair with \texttt{Tkinter} or \texttt{Pygame} to produce UI. Nice graphs are possible using \texttt{Plotly}. No support for function overloading. UI development is not as straightforward as a MATLAB app.
+    
+    \item \textbf{Unity:} Language supports function overloading. Would require team to learn C\#. Building the payload designer on top of an entire game engine may be excessive, and not at all lightweight to run and develop on.
+\end{itemize}
+
+\textit{\checkmark Recommendation: a Python application, with the potential for adding user-interactability through notebooks built using IPython in Google Colab.}
+
+\section{System Architecture}
+
+From a system architecture perspective, the payload designer can be seen as a collection of component models strung together in various arrangements or \textit{pipelines}. We describe component models and pipelines in turn.
+
+\subsection{Components}
+Component models are implemented as classes (see \href{https://docs.python.org/3/tutorial/classes.html}{Python documentation}), possessing attributes that define the parameters of the component, alongside methods that enable the calculation of attributes that are not initially defined.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{figures/component-architecture.png}
+\caption{Component class architecture.}
+\label{fig:component-architecture}
+\end{figure}
+
+Where $v$, $w$, $x$, $y$, and $z$ are attributes defining the component. Connecting lines are methods used to compute an attribute given the other attributes it depends on. It should be noted that not every parameter is necessarily dependent on every other parameter which defines the component. The concept of input and output variables is dropped in favour of a general multi-directional dependency approach. This is done to provide the design team with as much flexibility as possible in their analysis. For example, a designer wishing to know the associated signal-to-noise ratio (SNR) for a particular slit width might build a pipeline that computes SNR as a function of slit width and all other required parameters. At a later time, the designer may wish to know the slit width required to reach a particular SNR target. To accomplish this, they would simply do some rewiring of the components in the pipeline. The internal logic of the component classes would adjust accordingly to compute slit width as a function of SNR.
+
+\subsubsection{Vectorization}
+
+\subsection{Pipelines}
+A pipeline refers to a collection of components wired together to produce some output(s). 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{figures/pipeline-architecture.png}
+\caption{A generic pipeline architecture.}
+\label{fig:pipeline-architecture}
+\end{figure}
+
+Practically, a pipeline is implemented in the following manner:
+
+\begin{algorithm}
+\caption{Component pipeline to solve for parameter $b$. A, B, and C are component classes.}\label{alg:pipeline}
+\begin{algorithmic}
+
+\Require $x, y, z, i, d$
+
+\Comment{component instantiation}
+\State $A.x \gets x$ 
+\State $A.y \gets y$
+\State $A.z \gets z$
+\State $B.i \gets i$
+\State $C.d \gets d$
+
+\Comment{pipeline definition and propagation}
+\State $j \gets A.x$
+\State $a \gets A.v()$
+\State $c \gets B.k(j)$
+
+\State $b \gets C.b(a, c)$
+\State \Return $b$
+
+\end{algorithmic}
+\end{algorithm}
+
+\section{Project Stages}
+The project is defined in four stages. These are:
+
+\begin{itemize}
+    \item \textbf{Stage 0}: Functional requirements are defined. Proposed system architecture is prototyped and validated. Developers are onboarded onto the payload designer development team and are familiarized with the toolchain.
+    
+    \item \textbf{Stage A}: Mathematical models for components are defined.
+    
+    \item \textbf{Stage B}: Components are implemented in source code. Visualization and optimization tools are implemented.
+    
+    \item \textbf{Stage C}: Numerical analysis and tradeoff studies begin. The component selection team defines component-specific requirements from findings. Parameters are validated and refined by the optical simulations team.
+    
+\end{itemize}
+
+\section{Workflow}
+The workflow for the development of component models (Stages A \& B) is described:
+
+\begin{enumerate}
+    \item A literature review is conducted on a specific component to source relevant parameters, equations, and typical values for the parameters that describe the component.
+    \item A mathematical model created and presented in this document. Any required derivations are made and presented. The assumptions and limitations of the model are noted.
+    \item Once the mathematical model for the component is peer-reviewed, it is implemented in the project source code.
+    \item Unit tests are written to validate the functionality of the component class.
+\end{enumerate}
+
+
+\newpage
+\printbibliography
+
+\include{appendix}
+
+\include{nomenclature}
+
+
+\end{document}

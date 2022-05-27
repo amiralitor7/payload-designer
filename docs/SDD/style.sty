@@ -1,0 +1,107 @@
+\ProvidesPackage{style}
+
+%% Packages
+\RequirePackage[T1]{fontenc}
+\RequirePackage[american]{babel}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[babel]{csquotes}
+\RequirePackage[separate-uncertainty=true, multi-part-units=single]{siunitx}
+\RequirePackage{algorithm}
+\RequirePackage{algpseudocode}
+\RequirePackage{amsthm}
+\RequirePackage{appendix}
+\RequirePackage{biblatex}
+\RequirePackage{booktabs}
+\RequirePackage{caption}
+\RequirePackage{enumerate}
+\RequirePackage{enumitem}
+\RequirePackage{float}
+\RequirePackage{geometry}
+\RequirePackage{graphicx}
+\RequirePackage{hyperref}
+\RequirePackage{mathtools, amssymb}
+\RequirePackage{cleveref}
+\RequirePackage{layout}
+\RequirePackage{longtable}
+\RequirePackage{microtype}
+\RequirePackage{minted}
+\RequirePackage{multirow}
+\RequirePackage{nomencl}
+\RequirePackage{setspace}
+\RequirePackage{subcaption}
+\RequirePackage{tablefootnote}
+\RequirePackage{threeparttable}
+\RequirePackage{tikz}
+\RequirePackage{titling}
+\RequirePackage{todonotes}
+\RequirePackage{verbatim}
+
+%% Optional Packages (uncomment to activate)
+% \RequirePackage{parskip}
+
+%% Package Config
+\geometry{
+    a4paper,
+    left=1.5in,
+    right=1.5in,
+    top=1.5in,
+    bottom=1.5in
+    }
+
+\captionsetup[table]{skip=10pt}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    }
+
+%% Commands
+% Sources
+\addbibresource{sources.bib}
+
+% Wordcounts. Usage:
+%TC:ignore
+% \quickwordcount{_main}
+% \quickcharcount{_main}
+% \detailtexcount{_main}
+%TC:endignore
+
+\newcommand{\detailtexcount}[1]{%
+  \immediate\write18{texcount -merge -sum -q #1.tex output.bbl > #1.wcdetail }%
+  \verbatiminput{#1.wcdetail}%
+}
+
+\newcommand{\quickwordcount}[1]{%
+  \immediate\write18{texcount -1 -sum -merge -q #1.tex output.bbl > #1-words.sum }%
+  \input{#1-words.sum} words%
+}
+
+\newcommand{\quickcharcount}[1]{%
+  \immediate\write18{texcount -1 -sum -merge -char -q #1.tex output.bbl > #1-chars.sum }%
+  \input{#1-chars.sum} characters (not including spaces)%
+}
+
+% Vectors
+\renewcommand{\vec}[1]{\boldsymbol{#1}} % Comment to represent vectors with an arrow on top
+\newcommand{\norm}[1]{\lvert #1 \rvert}
+\newcommand{\abs}[1]{\lvert #1 \rvert}
+
+% Extra symbols
+\newcommand\cog{\bigoplus} % center of gravity
+\renewcommand\inf{\infty} % shorthand infinity
+
+% Custom units
+\DeclareSIUnit\pixel{px}
+\DeclareSIUnit\px{px}
+\DeclareSIUnit\electron{e^-}
+\DeclareSIUnit\bit{bit}
+
+% Macro text
+\newcommand{\apd}[1]{As previously defined \eqref{#1}}
+\newcommand{\aka}{\texttt{Aka.} }
+
+
+

@@ -1,3 +1,10 @@
+*.aux
+*.bcf
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.toc
 .DS_Store
 .env
 .mypy_cache
