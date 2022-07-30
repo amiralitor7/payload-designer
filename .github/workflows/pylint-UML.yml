@@ -21,5 +21,5 @@ jobs:
     - name: Analysing the code with pylint
       run: |
         Files= $(git ls-files '*.py')
-        for f in Files; do; pyreverse $f; done
+        for f in Files; do; pyreverse $f -d payload-designer/img; done
           
