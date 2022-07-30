@@ -20,4 +20,10 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        pylint $(git ls-files '*.py')
+        Files= $(git ls-files '*.py')
+        for f in Files
+        do
+          pyreverse $f
+          dot -Tpng classes.dot > $f.png
+        done
+          
