@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.10"]
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -18,8 +18,9 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install pylint
+        sudo apt install graphviz
     - name: Analysing the code with pylint
       run: |
-        Files= $(git ls-files '*.py')
-        for f in Files; do; pyreverse $f -d payload-designer/img; done
-          
+        pyreverse -o png -d img payload-designer
+    - name: Add & Commit
+      uses: EndBug/add-and-commit@v9.0.1
