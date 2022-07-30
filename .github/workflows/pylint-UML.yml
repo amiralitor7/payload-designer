@@ -21,6 +21,6 @@ jobs:
         sudo apt install graphviz
     - name: Analysing the code with pylint
       run: |
-        pyreverse -o png -d img payload-designer
+        pyreverse -o png -d img payload_designer
     - name: Add & Commit
       uses: EndBug/add-and-commit@v9.0.1
