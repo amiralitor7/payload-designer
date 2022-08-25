@@ -40,12 +40,8 @@ repos:
   hooks:
     - id: pylint
       name: pylint
-      entry: pyreverse
+      entry: pyreverse payload_designer
       language: system
       types: [python]
-      args:
-        [
-          "-d img payload_designer"
-        ]
 
 
