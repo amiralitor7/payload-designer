@@ -1,1 +1,6 @@
+#!/bin/sh
+#
+#  .git/hooks/pre-commit
+#
+
 git add file.xyz
