@@ -1,0 +1,5 @@
+#!/bin/bash
+pip install pylint
+sudo apt install graphviz
+pyreverse -o png -d img payload_designer
+python -m pip install --upgrade pip
